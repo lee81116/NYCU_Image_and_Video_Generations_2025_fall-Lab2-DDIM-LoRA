@@ -79,16 +79,14 @@ class UNet(nn.Module):
             if self.training:
                 assert not torch.any(class_label == 0) # 0 for null.
                 
-                ######## TODO ########
-                # DO NOT change the code outside this part.
-                # Assignment 2. Implement random null conditioning in CFG training.
-                raise NotImplementedError("TODO")
+                ######## CFG ########
+                # Implement random null conditioning in CFG training.
+                raise NotImplementedError("No need to implement cfg in assignment 2")
                 #######################
             
-            ######## TODO ########
-            # DO NOT change the code outside this part.
-            # Assignment 2. Implement class conditioning
-            raise NotImplementedError("TODO")
+            ######## CFG ########
+            # Implement class conditioning
+            raise NotImplementedError("No need to implement cfg in assignment 2")
             #######################
 
         # Downsampling

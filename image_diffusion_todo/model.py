@@ -78,22 +78,22 @@ class DiffusionModule(nn.Module):
 
         if do_classifier_free_guidance:
 
-            ######## TODO ########
-            # Assignment 2. Implement the classifier-free guidance.
+            ######## CFG ########
+            # Implement the classifier-free guidance.
             # Specifically, given a tensor of shape (batch_size,) containing class labels,
             # create a tensor of shape (2*batch_size,) where the first half is filled with zeros (i.e., null condition).
             assert class_label is not None
             assert len(class_label) == batch_size, f"len(class_label) != batch_size. {len(class_label)} != {batch_size}"
-            raise NotImplementedError("TODO")
+            raise NotImplementedError("No need to implement cfg in assignment 2")
             #######################
 
         traj = [x_T]
         for t in tqdm(self.var_scheduler.timesteps):
             x_t = traj[-1]
             if do_classifier_free_guidance:
-                ######## TODO ########
-                # Assignment 2. Implement the classifier-free guidance.
-                raise NotImplementedError("TODO")
+                ######## CFG ########
+                # Implement the classifier-free guidance.
+                raise NotImplementedError("No need to implement cfg in assignment 2")
                 #######################
             else:
                 # 如果是 conditional 就傳 class_label，否則就兩個參數
@@ -125,7 +125,7 @@ class DiffusionModule(nn.Module):
         torch.save(dic, file_path)
 
     def load(self, file_path):
-        dic = torch.load(file_path, map_location="cpu")
+        dic = torch.load(file_path, map_location="cpu", weights_only=False)
         hparams = dic["hparams"]
         state_dict = dic["state_dict"]
 
