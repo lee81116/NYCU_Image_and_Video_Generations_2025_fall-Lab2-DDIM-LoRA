@@ -4,7 +4,7 @@ import torch
 from pathlib import Path
 from dataset import tensor_to_pil_image
 from model import DiffusionModule
-from scheduler import DDPMScheduler
+from scheduler import DDPMScheduler, DDIMScheduler
 
 def main(args):
     save_dir = Path(args.save_dir)
@@ -13,20 +13,32 @@ def main(args):
     device = f"cuda:{args.gpu}"
 
     # 1) load model
-    ddpm = DiffusionModule(None, None)
-    ddpm.load(args.ckpt_path)
-    ddpm.eval().to(device)
+    model = DiffusionModule(None, None)
+    model.load(args.ckpt_path)
+    model.eval().to(device)
 
     # 2)  predictor  scheduler 
-    ddpm.predictor = args.predictor  # "noise" / "x0" / "mean"
+    model.predictor = args.predictor  # "noise" / "x0" / "mean"
 
-    T = ddpm.var_scheduler.num_train_timesteps
-    ddpm.var_scheduler = DDPMScheduler(
-        T,
-        beta_1=args.beta_1,
-        beta_T=args.beta_T,
-        mode=args.mode,
-    ).to(device)
+    num_train_timesteps = model.var_scheduler.num_train_timesteps
+    if args.sample_method == "ddpm":
+        model.var_scheduler = DDPMScheduler(
+            num_train_timesteps,
+            beta_1=args.beta_1,
+            beta_T=args.beta_T,
+            mode=args.mode,
+        ).to(device)
+    elif args.sample_method == "ddim":
+        model.var_scheduler = DDIMScheduler(
+            num_train_timesteps,
+            beta_1=args.beta_1,
+            beta_T=args.beta_T,
+            mode="linear",
+            num_inference_timesteps=args.ddim_steps,
+            eta=args.eta,
+        ).to(device)
+    else:
+        raise ValueError(f"Invalid sample method: {args.sample_method}")
 
     total_num_samples = 500
     num_batches = int(np.ceil(total_num_samples / args.batch_size))
@@ -37,15 +49,15 @@ def main(args):
         B = eidx - sidx
 
         if args.use_cfg:
-            assert getattr(ddpm.network, "use_cfg", False), "This checkpoint wasn't trained with CFG."
+            assert getattr(model.network, "use_cfg", False), "This checkpoint wasn't trained with CFG."
 
-            samples = ddpm.sample(
+            samples = model.sample(
                 B,
                 class_label=torch.randint(0, 3, (B,), device=device),
                 guidance_scale=args.cfg_scale,
             )
         else:
-            samples = ddpm.sample(B)
+            samples = model.sample(B)
 
         for j, img in zip(range(sidx, eidx), tensor_to_pil_image(samples)):
             img.save(save_dir / f"{j}.png")
@@ -68,6 +80,8 @@ if __name__ == "__main__":
 
     parser.add_argument("--use_cfg", action="store_true")
     parser.add_argument("--sample_method", type=str, default="ddpm")
+    parser.add_argument("--ddim_steps", type=int, default=50)
+    parser.add_argument("--eta", type=float, default=0.0)
     parser.add_argument("--cfg_scale", type=float, default=7.5)
 
     args = parser.parse_args()

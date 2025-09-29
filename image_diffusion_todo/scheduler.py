@@ -198,3 +198,56 @@ class DDPMScheduler(BaseScheduler):
         #######################
 
         return x_t, eps
+
+class DDIMScheduler(BaseScheduler):
+    def __init__(
+        self,
+        num_train_timesteps: int,
+        beta_1: float,
+        beta_T: float,
+        mode: str = "linear",
+        num_inference_timesteps: int = 50,
+        eta: float = 0.0,
+    ):
+        super().__init__(num_train_timesteps, beta_1, beta_T, mode)
+        self.eta = float(eta)
+        self.set_inference_timesteps(num_inference_timesteps)
+
+    def set_inference_timesteps(self, num_inference_timesteps: int):
+        """
+        Define the inference schedule (a subset of training timesteps, descending order).
+        Inputs:
+            num_inference_timesteps (int): number of inference steps (e.g., 50).
+        """
+        ######## TODO ########
+        # Hint:
+        #   - Define the DDIM inference schedule based on the given num_inference_timesteps.
+        #   - The schedule should be a subset of training timesteps, ordered in descending fashion.
+        #   - Store the result in `self.timesteps` (as a torch tensor) 
+        #   - Store the step ratio in `self._ddim_step_ratio` for later use when computing previous t.
+        #   - Compute a `step_ratio` that maps inference steps to training steps.
+        # DO NOT change the code outside this part.
+        raise NotImplementedError("TODO")
+        #######################
+
+    def _get_teeth(self, consts: torch.Tensor, t: torch.Tensor):
+        const = consts.gather(-1, t)
+        return const.reshape(-1, 1, 1, 1)
+
+    @torch.no_grad()
+    def step(self, x_t: torch.Tensor, t: int, eps_theta: torch.Tensor):
+        """
+        One step DDIM update: x_t -> x_{t_prev} with deterministic/stochastic control via eta.
+
+        Input:
+            x_t: [B,C,H,W]
+            t: current absolute timestep index
+            eps_theta: predicted noise
+        Output:
+            sample_prev: x at previous inference timestep
+        """
+        ######## TODO ########
+        # DO NOT change the code outside this part.
+        sample_prev = None
+        #######################
+        return sample_prev
