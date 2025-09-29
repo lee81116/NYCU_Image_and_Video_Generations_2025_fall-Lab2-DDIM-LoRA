@@ -235,7 +235,7 @@ class DDIMScheduler(BaseScheduler):
         return const.reshape(-1, 1, 1, 1)
 
     @torch.no_grad()
-    def step(self, x_t: torch.Tensor, t: int, eps_theta: torch.Tensor):
+    def step(self, x_t: torch.Tensor, t: int, eps_theta: torch.Tensor, predictor: str):
         """
         One step DDIM update: x_t -> x_{t_prev} with deterministic/stochastic control via eta.
 
@@ -248,6 +248,7 @@ class DDIMScheduler(BaseScheduler):
         """
         ######## TODO ########
         # DO NOT change the code outside this part.
+        assert predictor == "noise", "In assignment 2, we only implement DDIM with noise predictor."
         sample_prev = None
         #######################
         return sample_prev
