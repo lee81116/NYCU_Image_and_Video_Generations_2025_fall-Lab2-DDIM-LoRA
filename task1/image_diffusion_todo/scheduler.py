@@ -243,6 +243,7 @@ class DDIMScheduler(BaseScheduler):
             x_t: [B,C,H,W]
             t: current absolute timestep index
             eps_theta: predicted noise
+            predictor: predictor type
         Output:
             sample_prev: x at previous inference timestep
         """
