@@ -167,11 +167,11 @@ Refer to [this link](https://huggingface.co/docs/datasets/v2.4.0/en/image_load#i
 sh scripts/train_lora_custom.sh
 ```
 
-<h3><b>Task 2-2. Train DreamBooth with LoRA on a Specific Identitye</b></h3>
+<h3><b>Task 2-2. Train DreamBooth with LoRA on a Specific Identity</b></h3>
 
 > Your objective is to train a DreamBooth model with LoRA to accurately capture and reproduce the identity of a specific subject. This subject could be anything personally meaningful to you, such as your own face, your pet, a favorite doll, or any other identifiable entity.
 >
-> DreamBooth is a fine-tuning technique that allows diffusion models to learn a unique identifier for a specific subject, enabling the generation of images featuring that exact subject post-training. By combining DreamBooth with LoRA, you can achieve this fine-tuning with only a small number of images and in a relatively short time frame.
+> [DreamBooth](https://arxiv.org/abs/2208.12242) is a fine-tuning technique that allows diffusion models to learn a unique identifier for a specific subject, enabling the generation of images featuring that exact subject post-training. By combining DreamBooth with LoRA, you can achieve this fine-tuning with only a small number of images and in a relatively short time frame.
 
 **🚀 Usage**
 
