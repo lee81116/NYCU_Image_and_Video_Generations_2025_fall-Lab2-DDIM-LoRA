@@ -262,10 +262,8 @@ class DDIMScheduler(BaseScheduler):
         ######## TODO ########
         # DO NOT change the code outside this part.
         assert predictor == "noise", "In assignment 2, we only implement DDIM with noise predictor."
-        if isinstance(t, int):
-            t = torch.tensor([t]).to(self.device)
+        
         alpha_prod_t = extract(self.alphas_cumprod, t, x_t)
-        t_prev      = (t - 1).clamp(min=0)
         t_index = (self.timesteps == t).nonzero(as_tuple=True)[0]
         t_prev = self.timesteps[t_index + 1] if t_index < len(self.timesteps) - 1 else torch.tensor(-1)
         t_prev = t_prev.to(x_t.device)
