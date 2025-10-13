@@ -40,7 +40,15 @@ class BaseScheduler(nn.Module):
             # 2. Convert alphā_t into betas using:
             #       beta_t = 1 - alphā_t / alphā_{t-1}
             # 3. Return betas as a tensor of shape [num_train_timesteps].
-            raise NotImplementedError("TODO: Implement cosine beta schedule here!")
+            s = 0.008
+            timesteps = torch.arange(num_train_timesteps, dtype=torch.float64)
+            t = timesteps / num_train_timesteps + s / (1 + s)
+            angles = t * (torch.pi/2)
+            alpha_bar_t = torch.cos(angles) ** 2
+            alpha_bar_t = alpha_bar_t / alpha_bar_t[0]
+            betas = 1 - (alpha_bar_t[1:] / alpha_bar_t[:-1])
+            # Set the upper bound (Finally found out.)
+            betas = betas.clamp_max(beta_T).to(torch.float32)
                
         else:
             raise NotImplementedError(f"{mode} is not implemented.")
@@ -227,7 +235,11 @@ class DDIMScheduler(BaseScheduler):
         #   - Store the step ratio in `self._ddim_step_ratio` for later use when computing previous t.
         #   - Compute a `step_ratio` that maps inference steps to training steps.
         # DO NOT change the code outside this part.
-        raise NotImplementedError("TODO")
+        self.num_inference_timesteps = num_inference_timesteps
+        self._ddim_step_ratio = self.num_train_timesteps / self.num_inference_timesteps
+        timesteps = (torch.arange(0, num_inference_timesteps) * self._ddim_step_ratio).round()
+        timesteps = torch.flip(timesteps,dims=(0,))
+        self.timesteps = timesteps.long()
         #######################
 
     def _get_teeth(self, consts: torch.Tensor, t: torch.Tensor):
@@ -250,6 +262,22 @@ class DDIMScheduler(BaseScheduler):
         ######## TODO ########
         # DO NOT change the code outside this part.
         assert predictor == "noise", "In assignment 2, we only implement DDIM with noise predictor."
-        sample_prev = None
+        if isinstance(t, int):
+            t = torch.tensor([t]).to(self.device)
+        alpha_prod_t = extract(self.var_scheduler.alphas_cumprod, t, x_t)
+        t_prev      = (t - 1).clamp(min=0)
+        if t_prev >= 0:
+            alpha_prod_t_prev = extract(self.var_scheduler.alphas_cumprod, t_prev, x_t)
+        else:
+            alpha_prod_t_prev = torch.ones_like(alpha_prod_t)
+
+        x0_pred = (x_t - (1 - alpha_prod_t).sqrt() * eps_theta) / alpha_prod_t.sqrt()
+
+        sigma_t = self.eta * ((1-alpha_prod_t_prev) / (1-alpha_prod_t)).sqrt() * (1 - alpha_prod_t/alpha_prod_t_prev).sqrt()
+
+        dir_xt = ((1-alpha_prod_t_prev) - sigma_t**2).sqrt() * eps_theta
+
+        noise = torch.randn_like(x_t)
+        sample_prev = alpha_prod_t_prev.sqrt()*x0_pred + dir_xt + sigma_t*noise
         #######################
         return sample_prev
