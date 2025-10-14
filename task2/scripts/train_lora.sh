@@ -18,5 +18,5 @@ accelerate launch --mixed_precision="no" train_lora.py \
   --lr_warmup_steps=0 \
   --seed=42 \
   --checkpoints_total_limit 4\
-  --validation_prompt="a girl wearing sunglasses" 
+  --validation_prompt="a girl holding an umbrella in the rain" 
   
