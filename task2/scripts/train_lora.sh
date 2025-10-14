@@ -1,5 +1,5 @@
 export MODEL_NAME="CompVis/stable-diffusion-v1-4"
-export DATASET_NAME="PhanAnh/LOR_art"
+export DATASET_NAME="younyokel/LoraNekozNeko"
 export OUTPUT_DIR="/content/drive/MyDrive/lab2_outputs"
 
 accelerate launch --mixed_precision="no" train_lora.py \
