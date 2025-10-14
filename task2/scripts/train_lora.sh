@@ -9,14 +9,14 @@ accelerate launch --mixed_precision="no" train_lora.py \
   --caption_column="caption" \
   --resolution=512 \
   --random_flip \
-  --train_batch_size=1 \
+  --train_batch_size=16 \
   --num_train_epochs=100 \
   --validation_epochs 1 \
-  --checkpointing_steps=2000 \
+  --checkpointing_steps=20000 \
   --learning_rate=1e-04 \
   --lr_scheduler="constant" \
   --lr_warmup_steps=0 \
   --seed=42 \
-  --checkpoints_total_limit 2 \
-  --validation_prompt="a girl in a pink dress holding a pink cloth"
+  --resume_from_checkpoint  "/content/drive/MyDrive/lab2_outputs/Lora3/checkpoint-4000"\  
+  --validation_prompt="a girl wearing sunglasses"
   
