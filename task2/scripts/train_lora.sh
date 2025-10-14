@@ -6,7 +6,7 @@ accelerate launch --mixed_precision="no" train_lora.py \
   --pretrained_model_name_or_path=$MODEL_NAME \
   --output_dir=$OUTPUT_DIR \
   --dataset_name=$DATASET_NAME \
-  --caption_column="text" \
+  --caption_column="image" \
   --resolution=512 \
   --random_flip \
   --train_batch_size=1 \
