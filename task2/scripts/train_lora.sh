@@ -1,6 +1,6 @@
 export MODEL_NAME="CompVis/stable-diffusion-v1-4"
-export DATASET_NAME="Tsumugii/Genshin-Character-LoRA-Dataset"
-export OUTPUT_DIR="/content/drive/MyDrive/lab2_outputs"
+export DATASET_NAME="imio/anime-face-lora"
+export OUTPUT_DIR="/content/drive/MyDrive/lab2_outputs/Lora2"
 
 accelerate launch --mixed_precision="no" train_lora.py \
   --pretrained_model_name_or_path=$MODEL_NAME \
