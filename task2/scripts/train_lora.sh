@@ -17,6 +17,7 @@ accelerate launch --mixed_precision="no" train_lora.py \
   --lr_scheduler="constant" \
   --lr_warmup_steps=0 \
   --seed=42 \
-  --resume_from_checkpoint  "/content/drive/MyDrive/lab2_outputs/Lora3/checkpoint-4000"\  
-  --validation_prompt="a girl wearing sunglasses"
+  --checkpoints_total_limit  \
+  --validation_prompt="a girl wearing sunglasses" \
+  --resume_from_checkpoint= "/content/drive/MyDrive/lab2_outputs/Lora3/checkpoint-4000"
   
