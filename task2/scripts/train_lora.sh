@@ -1,12 +1,12 @@
 export MODEL_NAME="CompVis/stable-diffusion-v1-4"
-export DATASET_NAME="imio/anime-face-lora"
-export OUTPUT_DIR="/content/drive/MyDrive/lab2_outputs/Lora2"
+export DATASET_NAME="Nechintosh/ghibli"
+export OUTPUT_DIR="/content/drive/MyDrive/lab2_outputs/Lora3"
 
 accelerate launch --mixed_precision="no" train_lora.py \
   --pretrained_model_name_or_path=$MODEL_NAME \
   --output_dir=$OUTPUT_DIR \
   --dataset_name=$DATASET_NAME \
-  --caption_column="text" \
+  --caption_column="caption" \
   --resolution=512 \
   --random_flip \
   --train_batch_size=1 \
@@ -18,5 +18,5 @@ accelerate launch --mixed_precision="no" train_lora.py \
   --lr_warmup_steps=0 \
   --seed=42 \
   --checkpoints_total_limit 2 \
-  --validation_prompt="a cute bear"
+  --validation_prompt="a girl in a pink dress holding a pink cloth"
   
