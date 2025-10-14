@@ -1,5 +1,5 @@
 export MODEL_NAME="CompVis/stable-diffusion-v1-4"
-export DATASET_NAME="alfredplpl/anime-with-gpt4v-caption-for-lora"
+export DATASET_NAME="Zoahmed1/lora_aaadd68d-7970-4f2e-9a5a-6a4295834395"
 export OUTPUT_DIR="/content/drive/MyDrive/lab2_outputs"
 
 accelerate launch --mixed_precision="no" train_lora.py \
