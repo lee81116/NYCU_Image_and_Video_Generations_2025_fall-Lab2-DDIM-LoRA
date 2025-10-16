@@ -237,9 +237,13 @@ class DDIMScheduler(BaseScheduler):
         # DO NOT change the code outside this part.
         self.num_inference_timesteps = num_inference_timesteps
         self._ddim_step_ratio = self.num_train_timesteps / self.num_inference_timesteps
-        timesteps = (torch.arange(0, num_inference_timesteps) * self._ddim_step_ratio).round()
-        timesteps = torch.flip(timesteps,dims=(0,))
-        self.timesteps = timesteps.long()
+        timesteps = (
+            (np.arange(0, num_inference_timesteps) * self._ddim_step_ratio)
+            .round()[::-1]
+            .copy()
+            .astype(np.int64)
+        )
+        timesteps = torch.from_numpy(timesteps).to(self.device)
         #######################
 
     def _get_teeth(self, consts: torch.Tensor, t: torch.Tensor):
@@ -264,9 +268,17 @@ class DDIMScheduler(BaseScheduler):
         assert predictor == "noise", "In assignment 2, we only implement DDIM with noise predictor."
         
         alpha_prod_t = extract(self.alphas_cumprod, t, x_t)
-        t_index = (self.timesteps == t).nonzero(as_tuple=True)[0]
-        t_prev = self.timesteps[t_index + 1] if t_index < len(self.timesteps) - 1 else torch.tensor(-1)
-        t_prev = t_prev.to(x_t.device)
+        t = torch.as_tensor(t, device=self.timesteps.device, dtype=self.timesteps.dtype)
+        pos = (self.timesteps == t).nonzero(as_tuple=True)[0]
+        if pos.numel() == 0:
+            raise ValueError(f"t={t.item()} not in self.timesteps")
+        i = pos.item()
+
+        if i < self.timesteps.numel() - 1:
+            t_prev = self.timesteps[i + 1]
+        else:
+            t_prev = torch.tensor(-1, device=self.timesteps.device, dtype=self.timesteps.dtype)
+
         if t_prev >= 0:
             alpha_prod_t_prev = extract(self.alphas_cumprod, t_prev, x_t)
         else:
